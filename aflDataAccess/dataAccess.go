@@ -2,7 +2,6 @@ package aflDataAccess
 
 import (
 	"math"
-	"sort"
 
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -13,25 +12,12 @@ import (
 //GetCurrentRound returns the current Round and Year
 func GetCurrentRound() aflShared.ActiveRound {
 
-	var years, rounds []int
-
-	aflShared.Find("forecast", nil, func(q *mgo.Query) {
-		aflShared.HandleError(q.Sort("-year").Distinct("year", &years))
+	var forecast aflShared.ForecastModel
+	aflShared.Find("forecast", bson.M{"resultmodel.winteam": bson.M{"$ne": ""}}, func(q *mgo.Query) {
+		aflShared.HandleError(q.Sort("-year", "-round").Limit(1).One(&forecast))
 	})
 
-	sort.Sort(sort.Reverse(sort.IntSlice(years)))
-
-	if len(years) == 0 {
-		return aflShared.ActiveRound{Year: 0, Round: 0}
-	}
-
-	aflShared.Find("forecast", bson.M{"year": years[0], "resultmodel.winteam": bson.M{"$ne": ""}}, func(q *mgo.Query) {
-		aflShared.HandleError(q.Sort("-round").Distinct("round", &rounds))
-	})
-
-	sort.Sort(sort.Reverse(sort.IntSlice(rounds)))
-
-	return aflShared.ActiveRound{Year: years[0], Round: rounds[0] + 1}
+	return aflShared.ActiveRound{Year: forecast.Year, Round: forecast.Round + 1}
 }
 
 //GetCurrentRoundDetails gets the forecasts for the current round
@@ -55,6 +41,7 @@ func GetPercentageForLine(pointHigh int, pointLow int, linePoints float32) aflSh
 
 	query := []interface{}{
 		bson.M{"$match": bson.M{"resultmodel.winteam": bson.M{"$ne": ""},
+			"round":     bson.M{"$gte": 7},
 			"winpoints": bson.M{"$lte": pointHigh, "$gte": pointLow}}},
 
 		bson.M{"$group": bson.M{
