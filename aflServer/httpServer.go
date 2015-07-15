@@ -45,7 +45,8 @@ func StartHTTPServer() {
 		c.JSON(200, aflScraper.ScrapePages())
 	})
 	router.GET("/seedPages", func(c *gin.Context) {
-		c.JSON(200, aflScraper.SeedPages())
+		aflScraper.SeedPages()
+		c.JSON(200, "Done")
 	})
 
 	router.Run(determineListenAddress())

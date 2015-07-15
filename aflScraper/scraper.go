@@ -2,7 +2,6 @@ package aflScraper
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -23,8 +22,6 @@ func ScrapePages() string {
 		}
 	}
 
-	log.Print(activeRounds)
-
 	scapeSportsBet()
 
 	for _, aR := range activeRounds {
@@ -36,7 +33,7 @@ func ScrapePages() string {
 }
 
 //SeedPages scrapes All forecasts and the current prices
-func SeedPages() string {
+func SeedPages() {
 
 	baseURI := "http://footyforecaster.com/AFL/RoundForecast/%d_Round_%d"
 
@@ -46,7 +43,6 @@ func SeedPages() string {
 			fmt.Printf("Finished scraping year: %d round :%d", year, round)
 		}
 	}
-	return "Done"
 }
 
 func goToPage(uri string) *goquery.Document {
