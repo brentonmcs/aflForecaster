@@ -21,8 +21,7 @@ func GetCurrentRound() aflShared.ActiveRound {
 }
 
 //GetCurrentRoundDetails gets the forecasts for the current round
-func GetCurrentRoundDetails() []aflShared.ForecastModel {
-	activeRound := GetCurrentRound()
+func GetCurrentRoundDetails(activeRound aflShared.ActiveRound) []aflShared.ForecastModel {
 	var result []aflShared.ForecastModel
 	aflShared.Find("forecast", bson.M{"year": activeRound.Year, "round": activeRound.Round}, func(q *mgo.Query) {
 		aflShared.HandleError(q.Sort("order").All(&result))

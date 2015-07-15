@@ -1,10 +1,12 @@
 package aflDataAccess
 
-import ("github.com/brentonmcs/afl/aflShared"
-"log")
+import (
+	"log"
 
-//FindStat - extracts Stat that matches the point range
+	"github.com/brentonmcs/afl/aflShared"
+)
 
+//FindStat - finds the stat that fits the range of the winPoints
 func FindStat(stats []aflShared.StatsModel, winPoints int, linePoints float32) (aflShared.StatsModel, aflShared.LinePointsAggregate) {
 	for _, s := range stats {
 		if s.PointHigh >= winPoints && s.PointLow <= winPoints {

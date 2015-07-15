@@ -1,16 +1,13 @@
 package aflStats
 
 import (
-	"github.com/brentonmcs/afl/aflDataAccess"
 	"github.com/brentonmcs/afl/aflShared"
 
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
-func getCurrentRoundPrices() []aflShared.MatchPrices {
-
-	currentRound := aflDataAccess.GetCurrentRound()
+func getCurrentRoundPrices(currentRound aflShared.ActiveRound) []aflShared.MatchPrices {
 
 	var roundInfo aflShared.RoundInfo
 	aflShared.Find("round", bson.M{"round": currentRound.Round}, func(q *mgo.Query) {

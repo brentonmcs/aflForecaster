@@ -45,17 +45,17 @@ func GenerateStats() []aflShared.StatsModel {
 
 // GenerateCurrentRoundStats - get the current round details with stakes and stats
 func GenerateCurrentRoundStats() []aflShared.MatchStatPriceModel {
-
-	currentRoundPrices := getCurrentRoundPrices()
+	currentRound := aflDataAccess.GetCurrentRound()
+	currentRoundPrices := getCurrentRoundPrices(currentRound)
 	stats := GenerateStats()
 
 	var result []aflShared.MatchStatPriceModel
-	for _, cur := range aflDataAccess.GetCurrentRoundDetails() {
+	for _, cur := range aflDataAccess.GetCurrentRoundDetails(currentRound) {
 
 		matchPrices, matchDate := getRoundPrices(convertName(cur.WinTeam), currentRoundPrices)
 		if (matchPrices == aflShared.FavPrices{}) {
 			continue
-		}		
+		}
 		stat, lineStat := aflDataAccess.FindStat(stats, cur.WinPoints, matchPrices.Favourite.LinePoints)
 
 		result = append(result, getStakingInformation(matchPrices, stat, cur, lineStat, matchDate))
